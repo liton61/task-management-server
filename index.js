@@ -9,7 +9,7 @@ app.use(cors());
 app.use(express.json());
 
 
-const { MongoClient, ServerApiVersion } = require('mongodb');
+const { MongoClient, ServerApiVersion, ObjectId } = require('mongodb');
 const uri = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASS}@cluster0.hgznyse.mongodb.net/?retryWrites=true&w=majority`;
 // console.log(uri);
 
@@ -35,11 +35,19 @@ async function run() {
             res.send(result);
         })
 
-        // get method added for forum
-        app.get("/task", async (req, res) => {
-            const result = await taskCollection.find().toArray();
-            res.send(result);
-        });
+        // // get method
+        // app.get("/task", async (req, res) => {
+        //     const result = await taskCollection.find().toArray();
+        //     res.send(result);
+        // });
+
+        app.get('/task/:email', async (req, res) => {
+            const email = req.params.email;
+            console.log(email);
+            const query = { email: email };
+            const user = await taskCollection.find(query).toArray();
+            res.send(user);
+        })
 
         // delete
         app.delete('/task/:id', async (req, res) => {
